@@ -312,16 +312,20 @@ module Plivo
       append Plivo::Sms.new(msg, opts)
     end
 
-    def addRecordSession(msg, opts = {})
+    def addRecordSession(opts = {})
       append Plivo::RecordSession.new(opts)
     end
 
-    def addPreAnswer(msg, opts = {})
+    def addPreAnswer(opts = {})
       append Plivo::PreAnswer.new(opts)
     end
 
-    def addScheduleHangup(msg, opts = {})
+    def addScheduleHangup(opts = {})
       append Plivo::ScheduleHangup.new(opts)
+    end
+
+    def addReject(opts = {})
+      append Plivo::Reject.new(opts)
     end
 
   end
@@ -341,20 +345,20 @@ module Plivo
   class GetDigits
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
-    attributes :action, :method, :timeout, :finishOnKey, :numDigits
+    attributes :action, :method, :timeout, :finishOnKey, :numDigits, :tries, :playBeep, :validDigits, :invalidDigitsSound
     allowed_grammar :play, :speak, :wait
   end
 
   class Record
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
-    attributes :action, :method, :timeout, :finishOnKey, :maxLength, :transcribe, :transcribeCallback, :playBeep
+    attributes :action, :method, :timeout, :finishOnKey, :maxLength, :transcribe, :transcribeCallback, :playBeep, :format, :prefix, :filePath
   end
 
   class Dial
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
-    attributes :action, :method, :timeout, :hangupOnStar, :timeLimit, :callerId
+    attributes :action, :method, :timeout, :hangupOnStar, :timeLimit, :callerId, :confirmSound, :confirmKey, :dialMusic
     allowed_grammar :number
   end
 
@@ -378,7 +382,7 @@ module Plivo
   class Number
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
-    attributes :sendDigits, :url
+    attributes :sendDigits, :url, :gateways, :gatewayCodecs, :gatewayTimeouts, :gatewayRetries, :extraDialString
   end
 
   class Conference
@@ -396,17 +400,25 @@ module Plivo
   class RecordSession
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
+    attributes :format, :prefix, :filePath
   end
 
   class ScheduleHangup
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
+    attributes :time
   end
 
   class PreAnswer
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
     allowed_grammar :speak, :play, :getDigits
+  end
+
+  class Reject
+    extend Plivo::Grammar::ClassMethods
+    include Plivo::Grammar
+    attributes :reason
   end
 
   class Response
