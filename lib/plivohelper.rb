@@ -49,63 +49,6 @@ module Plivo
       return fetch(uri, vars, method)
     end
 
-    #enocde the parameters into a URL friendly string
-    #
-    #@param [Hash] URL key / values
-    #@return [String] Encoded URL
-    protected
-    def urlencode(params)
-      params.to_a.collect! \
-        { |k, v| "#{k}=#{CGI.escape(v.to_s)}" }.join("&")
-    end
-
-    # Create the uri for the REST call
-    #
-    #@param [String, Hash] Base URL and URL parameters
-    #@return [String] URI for the REST call
-    def build_get_uri(uri, params)
-      if params && params.length > 0
-        if uri.include?('?')
-          if uri[-1, 1] != '&'
-            uri += '&'
-          end
-            uri += urlencode(params)
-          else
-            uri += '?' + urlencode(params)
-        end
-      end
-      return uri
-    end
-
-    # Returns a http request for the given url and parameters
-    #
-    #@param [String, Hash, String] Base URL, URL parameters, optional METHOD
-    #@return [String] URI for the REST call
-    def fetch(url, params, method=nil)
-      if method && method == 'GET'
-        url = build_get_uri(url, params)
-      end
-      uri = URI.parse(url)
-
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-
-      if method && method == 'GET'
-        req = Net::HTTP::Get.new(uri.request_uri)
-      elsif method && method == 'DELETE'
-        req = Net::HTTP::Delete.new(uri.request_uri)
-      elsif method && method == 'PUT'
-        req = Net::HTTP::Put.new(uri.request_uri)
-        req.set_form_data(params)
-      else
-        req = Net::HTTP::Post.new(uri.request_uri)
-        req.set_form_data(params)
-      end
-      req.basic_auth(@id, @token)
-
-      return http.request(req)
-    end
-
     # REST Call Helper
     def call(call_params)
       path = '/v0.1/Call/'
@@ -153,6 +96,63 @@ module Plivo
       path = '/v0.1/CancelScheduledHangup/'
       method = 'POST'
       return request(path, method, call_params)
+    end
+
+    #enocde the parameters into a URL friendly string
+    #
+    #@param [Hash] URL key / values
+    #@return [String] Encoded URL
+    protected
+    def urlencode(params)
+      params.to_a.collect! \
+        { |k, v| "#{k}=#{CGI.escape(v.to_s)}" }.join("&")
+    end
+
+    # Create the uri for the REST call
+    #
+    #@param [String, Hash] Base URL and URL parameters
+    #@return [String] URI for the REST call
+    def build_get_uri(uri, params)
+      if params && params.length > 0
+        if uri.include?('?')
+          if uri[-1, 1] != '&'
+            uri += '&'
+          end
+            uri += urlencode(params)
+          else
+            uri += '?' + urlencode(params)
+        end
+      end
+      return uri
+    end
+
+    # Returns a http request for the given url and parameters
+    #
+    #@param [String, Hash, String] Base URL, URL parameters, optional METHOD
+    #@return [String] URI for the REST call
+    def fetch(url, params, method=nil)
+      if method && method == 'GET'
+        url = build_get_uri(url, params)
+      end
+      uri = URI.parse(url)
+
+      http = Net::HTTP.new(uri.host, uri.port)
+      #http.use_ssl = true
+
+      if method && method == 'GET'
+        req = Net::HTTP::Get.new(uri.request_uri)
+      elsif method && method == 'DELETE'
+        req = Net::HTTP::Delete.new(uri.request_uri)
+      elsif method && method == 'PUT'
+        req = Net::HTTP::Put.new(uri.request_uri)
+        req.set_form_data(params)
+      else
+        req = Net::HTTP::Post.new(uri.request_uri)
+        req.set_form_data(params)
+      end
+      req.basic_auth(@id, @token)
+
+      return http.request(req)
     end
   end
 
