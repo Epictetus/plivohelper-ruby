@@ -333,7 +333,7 @@ module Plivo
   class Speak
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
-    attributes :voice, :language, :loop
+    attributes :voice, :language, :loop, :engine, :type, :method
   end
 
   class Play
@@ -412,7 +412,7 @@ module Plivo
   class PreAnswer
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
-    allowed_grammar :speak, :play, :getDigits
+    allowed_grammar :speak, :play, :getDigits, :wait
   end
 
   class Reject
