@@ -56,7 +56,7 @@ Files
 
 **examples/example-utils.rb:** example usage of utilities
 
-**examples/example-responseserver.rb:** example usage of live RESTXML (`Requires Sinatra <http://flask.pocoo.org/>`_)
+**examples/example-responseserver.rb:** example usage of live RESTXML (`Requires Sinatra <http://www.sinatrarb.com/>`_)
 
 
 Credits
