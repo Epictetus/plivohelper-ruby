@@ -371,7 +371,7 @@ module Plivo
   class Wait
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
-    attributes :length
+    attributes :length, :transferEnabled
   end
 
   class Hangup
