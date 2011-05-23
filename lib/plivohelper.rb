@@ -308,10 +308,6 @@ module Plivo
       append Plivo::Conference.new(room, opts)
     end
 
-    def addSms(msg, opts = {})
-      append Plivo::Sms.new(msg, opts)
-    end
-
     def addRecordSession(opts = {})
       append Plivo::RecordSession.new(opts)
     end
@@ -389,12 +385,6 @@ module Plivo
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
     attributes :muted, :beep, :startConferenceOnEnter, :endConferenceOnExit, :waitUrl, :waitMethod
-  end
-
-  class Sms
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
-    attributes :to, :from, :statusCallback, :action, :method
   end
 
   class RecordSession
