@@ -58,7 +58,7 @@ module Plivo
 
     # REST Bulk Call Helper
     def bulk_call(call_params)
-      path = '/v0.1/BulkCalls/'
+      path = '/v0.1/BulkCall/'
       method = 'POST'
       return request(path, method, call_params)
     end
