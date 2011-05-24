@@ -296,8 +296,8 @@ module Plivo
       append Plivo::Wait.new(opts)
     end
 
-    def addHangup
-      append Plivo::Hangup.new
+    def addHangup(opts = {})
+      append Plivo::Hangup.new(opts)
     end
 
     def addNumber(number, opts = {})
@@ -308,20 +308,8 @@ module Plivo
       append Plivo::Conference.new(room, opts)
     end
 
-    def addRecordSession(opts = {})
-      append Plivo::RecordSession.new(opts)
-    end
-
     def addPreAnswer(opts = {})
       append Plivo::PreAnswer.new(opts)
-    end
-
-    def addScheduleHangup(opts = {})
-      append Plivo::ScheduleHangup.new(opts)
-    end
-
-    def addReject(opts = {})
-      append Plivo::Reject.new(opts)
     end
 
   end
@@ -348,7 +336,7 @@ module Plivo
   class Record
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
-    attributes :action, :method, :timeout, :finishOnKey, :maxLength, :transcribe, :transcribeCallback, :playBeep, :format, :prefix, :filePath
+    attributes :action, :method, :timeout, :finishOnKey, :maxLength, :playBeep, :format, :prefix, :filePath, :bothLegs
   end
 
   class Dial
@@ -373,6 +361,7 @@ module Plivo
   class Hangup
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
+    attributes :reason, :schedule
   end
 
   class Number
@@ -387,34 +376,16 @@ module Plivo
     attributes :muted, :beep, :startConferenceOnEnter, :endConferenceOnExit, :waitUrl, :waitMethod
   end
 
-  class RecordSession
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
-    attributes :format, :prefix, :filePath
-  end
-
-  class ScheduleHangup
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
-    attributes :time
-  end
-
   class PreAnswer
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
     allowed_grammar :speak, :play, :getDigits, :wait
   end
 
-  class Reject
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
-    attributes :reason
-  end
-
   class Response
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
-    allowed_grammar :speak, :play, :getDigits, :record, :dial, :redirect, :wait, :hangup, :sms, :recordSession, :preAnswer, :scheduleHangup, :conference
+    allowed_grammar :speak, :play, :getDigits, :record, :dial, :redirect, :wait, :hangup, :preAnswer, :conference
   end
 
   # Plivo Utility function and Request Validation class
