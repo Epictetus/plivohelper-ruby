@@ -21,8 +21,6 @@ SUPPORTED GRAMMAR:
     Number
     Conference
     PreAnswer
-    RecordSession
-    ScheduleHangup
 =end
 
 # ===========================================================================
@@ -46,7 +44,7 @@ puts @r.respond
 @g = @r.append(Plivo::GetDigits.new(:numDigits => "10", :playBeep => 'true', :timeout => '25'))
 @g.append(Plivo::Speak.new("Press 1"))
 @r.append(Plivo::Wait.new(:length => "5"))
-@r.append(Plivo::ScheduleHangup.new(:time => "10"))
+@r.append(Plivo::Hangup.new(:schedule => "10"))
 @r.append(Plivo::Redirect.new())
 puts @r.respond
 
@@ -100,13 +98,13 @@ puts @r.respond
 # ===========================================================================
 # 5. Convenience methods
 @r = Plivo::Response.new
-@r.addSpeak "Hello World", :voice => "man", :language => "fr", :loop => "10"
+@r.addSpeak "Hello World", :voice => "flite", :language => "en", :loop => "10"
 @r.addConference("MyRoom")
 @r.addPlay "http://www.mp3.com"
 puts @r.respond
 
 #<Response>
-#  <Speak voice="man" language="fr" loop="10">Hello World</Speak>
+#  <Speak voice="flite" language="en" loop="10">Hello World</Speak>
 #  <Conference>MyRoom</Conference>
 #  <Play>http://www.mp3.com</Play>
 #</Response>
