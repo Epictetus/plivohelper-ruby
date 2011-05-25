@@ -373,7 +373,7 @@ module Plivo
   class Conference
     extend Plivo::Grammar::ClassMethods
     include Plivo::Grammar
-    attributes :muted, :beep, :startConferenceOnEnter, :endConferenceOnExit, :waitUrl, :waitMethod
+    attributes :muted, :enterSound, :exitSound, :startConferenceOnEnter, :endConferenceOnExit, :waitSound, :timeLimit, :hangupOnStar
   end
 
   class PreAnswer
