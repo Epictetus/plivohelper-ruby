@@ -36,7 +36,7 @@ module Plivo
       if !path || path.length < 1
           raise ArgumentError, 'Invalid path parameter'
         end
-        if method && !['GET', 'POST', 'DELETE', 'PUT'].include?(method)
+        if method && !['GET', 'POST'].include?(method)
           raise NotImplementedError, 'HTTP %s not implemented' % method
         end
 
@@ -157,20 +157,20 @@ module Plivo
   end
 
   # RESTXML Response Helpers
-  module Grammar
+  module Element
     module ClassMethods
       @attributes = []
-      @allowed_grammar = []
+      @allowed_element = []
       attr_accessor :attributes
 
-      def allowed_grammar(*grammar)
-        return @allowed_grammar if grammar == []
-        @allowed_grammar = [] if @allowed_grammar.nil?
-        grammar.each do |grammar_element|
-          cleaned_grammar_element = grammar_element.to_s.slice(0,1).capitalize + grammar_element.to_s.slice(1..-1)
-          @allowed_grammar << cleaned_grammar_element
+      def allowed_element(*element)
+        return @allowed_element if element == []
+        @allowed_element = [] if @allowed_element.nil?
+        element.each do |element_element|
+          cleaned_element_element = element_element.to_s.slice(0,1).capitalize + element_element.to_s.slice(1..-1)
+          @allowed_element << cleaned_element_element
         end
-        @allowed_grammar = @allowed_grammar.uniq
+        @allowed_element = @allowed_element.uniq
       end
 
       def attributes(*attrs)
@@ -186,18 +186,18 @@ module Plivo
       self.class.attributes
     end
 
-    #test if a given grammar element is allowed to be nested
+    #test if a given element element is allowed to be nested
       #
-      #@param [Object] Grammar to be appended
+      #@param [Object] Element to be appended
       #@return [true, false]
-    def allowed?(grammar_element)
-      self.class.allowed_grammar.nil? ? false : self.class.allowed_grammar.include?(grammar_element.class.name.split('::')[1])
+    def allowed?(element_element)
+      self.class.allowed_element.nil? ? false : self.class.allowed_element.include?(element_element.class.name.split('::')[1])
     end
 
     #initialize a plivo response object
       #
-      #@param [String, Hash] Body of the grammar, and a hash of the attributes
-      #@return [Object] Plivo grammar object
+      #@param [String, Hash] Body of the element, and a hash of the attributes
+      #@return [Object] Plivo element object
       #
       #@raises [ArgumentError] Invalid Argument
     def initialize(body = nil, params = {})
@@ -258,16 +258,16 @@ module Plivo
       CGI::escape(self.respond)
     end
 
-    def append(grammar_element)
-      if(allowed?(grammar_element))
-        @children << grammar_element
+    def append(element_element)
+      if(allowed?(element_element))
+        @children << element_element
         @children[-1]
       else
-        raise ArgumentError, "Grammar Not Supported"
+        raise ArgumentError, "Element Not Supported"
       end
     end
 
-    # Grammar Convenience Methods
+    # Element Convenience Methods
     def addSpeak(string_to_speak = nil, opts = {})
       append Plivo::Speak.new(string_to_speak, opts)
     end
@@ -315,77 +315,77 @@ module Plivo
   end
 
   class Speak
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
+    extend Plivo::Element::ClassMethods
+    include Plivo::Element
     attributes :voice, :language, :loop, :engine, :type, :method
   end
 
   class Play
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
+    extend Plivo::Element::ClassMethods
+    include Plivo::Element
     attributes :loop
   end
 
   class GetDigits
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
-    attributes :action, :method, :timeout, :finishOnKey, :numDigits, :tries, :playBeep, :validDigits, :invalidDigitsSound
-    allowed_grammar :play, :speak, :wait
+    extend Plivo::Element::ClassMethods
+    include Plivo::Element
+    attributes :action, :method, :timeout, :finishOnKey, :numDigits, :retries, :playBeep, :validDigits, :invalidDigitsSound
+    allowed_element :play, :speak, :wait
   end
 
   class Record
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
-    attributes :action, :method, :timeout, :finishOnKey, :maxLength, :playBeep, :format, :prefix, :filePath, :bothLegs
+    extend Plivo::Element::ClassMethods
+    include Plivo::Element
+    attributes :timeout, :finishOnKey, :maxLength, :playBeep, :format, :prefix, :filePath, :bothLegs
   end
 
   class Dial
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
+    extend Plivo::Element::ClassMethods
+    include Plivo::Element
     attributes :action, :method, :timeout, :hangupOnStar, :timeLimit, :callerId, :confirmSound, :confirmKey, :dialMusic
-    allowed_grammar :number
+    allowed_element :number
   end
 
   class Redirect
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
+    extend Plivo::Element::ClassMethods
+    include Plivo::Element
     attributes :method
   end
 
   class Wait
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
+    extend Plivo::Element::ClassMethods
+    include Plivo::Element
     attributes :length, :transferEnabled
   end
 
   class Hangup
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
+    extend Plivo::Element::ClassMethods
+    include Plivo::Element
     attributes :reason, :schedule
   end
 
   class Number
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
-    attributes :sendDigits, :url, :gateways, :gatewayCodecs, :gatewayTimeouts, :gatewayRetries, :extraDialString
+    extend Plivo::Element::ClassMethods
+    include Plivo::Element
+    attributes :sendDigits, :gateways, :gatewayCodecs, :gatewayTimeouts, :gatewayRetries, :extraDialString
   end
 
   class Conference
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
+    extend Plivo::Element::ClassMethods
+    include Plivo::Element
     attributes :muted, :enterSound, :exitSound, :startConferenceOnEnter, :endConferenceOnExit, :waitSound, :timeLimit, :hangupOnStar
   end
 
   class PreAnswer
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
-    allowed_grammar :speak, :play, :getDigits, :wait
+    extend Plivo::Element::ClassMethods
+    include Plivo::Element
+    allowed_element :speak, :play, :getDigits, :wait
   end
 
   class Response
-    extend Plivo::Grammar::ClassMethods
-    include Plivo::Grammar
-    allowed_grammar :speak, :play, :getDigits, :record, :dial, :redirect, :wait, :hangup, :preAnswer, :conference
+    extend Plivo::Element::ClassMethods
+    include Plivo::Element
+    allowed_element :Speak, :Play, :GetDigits, :Record, :Dial, :Redirect, :Wait, :Hangup, :PreAnswer, :Conference
   end
 
   # Plivo Utility function and Request Validation class
